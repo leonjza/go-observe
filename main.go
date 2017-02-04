@@ -7,6 +7,7 @@ package main
 // Weekend Projects FTW
 
 import (
+	"bufio"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -195,9 +196,11 @@ func main() {
 		fmt.Println("")
 
 		fmt.Println("Available Commands:")
-		fmt.Println("	results 	- get analysis results for a url")
-		fmt.Println("	submit 		- submit a url for analysis")
-		fmt.Println("	version 	- print the version and exit")
+		fmt.Println("	results 		- get analysis results for a url")
+		fmt.Println("	bulkresults 		- get bulk analysis for urls from a file")
+		fmt.Println("	submit 			- submit a url for analysis")
+		fmt.Println("	bulksubmit		- submit urls for analysis read from a file")
+		fmt.Println("	version 		- print the version and exit")
 		fmt.Println("")
 
 		fmt.Println("Examples:")
@@ -206,6 +209,7 @@ func main() {
 		fmt.Printf("	%s results -url https://www.google.com\n --detail", os.Args[0])
 		fmt.Printf("	%s submit -url https://www.google.com\n", os.Args[0])
 		fmt.Printf("	%s submit -url https://www.google.com --rescan\n", os.Args[0])
+		fmt.Printf("	%s bulksubmit -file urls.txt\n", os.Args[0])
 	}
 
 	// strucutre the application subcommands and flags
@@ -222,6 +226,15 @@ func main() {
 	submitURLFlag := submitCommand.String("url", "", "URL to submit an analysis for")
 	submitHideFlag := submitCommand.Bool("no-hide", false, "Prevent results from being hidden from the Observatory site")
 	submitRescanFlag := submitCommand.Bool("rescan", false, "Should a rescan be forced")
+
+	// go-observe bulksubmit
+	bulkSubmitCommand := flag.NewFlagSet("bulksubmit", flag.ExitOnError)
+	bulkSubmitFileNameFlag := bulkSubmitCommand.String("file", "", "The file to open with URLs for submission")
+
+	// go-observe bulkresults
+	bulkResultsCommand := flag.NewFlagSet("bulkresults", flag.ExitOnError)
+	bulkResultsFileNameFlag := bulkResultsCommand.String("file", "", "The file to read for URLs to get results for")
+	// bulkResultsCsvOutputFileFlag := bulkResultsCommand.String("csv", "", "The filename to dump CSV output to")
 
 	// generic flags
 	versionFlag := flag.Bool("version", false, "Display the version number and exit")
@@ -253,9 +266,17 @@ func main() {
 		{
 			submitCommand.Parse(os.Args[2:])
 		}
+	case "bulksubmit":
+		{
+			bulkSubmitCommand.Parse(os.Args[2:])
+		}
 	case "results":
 		{
 			resultsCommand.Parse(os.Args[2:])
+		}
+	case "bulkresults":
+		{
+			bulkResultsCommand.Parse(os.Args[2:])
 		}
 	default:
 		{
@@ -275,7 +296,12 @@ func main() {
 			return
 		}
 
-		host, _ := validateAndGetURLHost(*submitURLFlag)
+		host, err := validateAndGetURLHost(*submitURLFlag)
+		if err != nil {
+			fmt.Printf("Failed parsing host from url with error: %s", err)
+			return
+		}
+
 		result := submitObservatoryAnalysis(host, *submitHideFlag, *submitRescanFlag)
 
 		if result.Error != "" {
@@ -286,13 +312,50 @@ func main() {
 		fmt.Printf("Scan is now:	%s\n", result.State)
 	}
 
+	if bulkSubmitCommand.Parsed() {
+		if *bulkSubmitFileNameFlag == "" {
+			fmt.Println("Please provide a filename to read URLs from")
+			return
+		}
+
+		// try to read entries from a file and submit the results
+		if file, err := os.Open(*bulkSubmitFileNameFlag); err == nil {
+
+			// close the file when we are done
+			defer file.Close()
+
+			// read the file line by line
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				candidate := scanner.Text()
+
+				host, err := validateAndGetURLHost(candidate)
+				if err != nil {
+					fmt.Printf("Skipping entry %s because of error %s\n", candidate, err)
+					continue
+				}
+
+				submitObservatoryAnalysis(host, false, true)
+			}
+
+		} else {
+			fmt.Printf("Failed to open file: %s", err)
+			return
+		}
+	}
+
 	if resultsCommand.Parsed() {
 		if *resultsURLFlag == "" {
 			fmt.Println("Please provide a URL to retreive results")
 			return
 		}
 
-		host, _ := validateAndGetURLHost(*resultsURLFlag)
+		host, err := validateAndGetURLHost(*resultsURLFlag)
+		if err != nil {
+			fmt.Printf("Failed parsing host from url with error: %s", err)
+			return
+		}
+
 		result := getObservatoryResults(host)
 		fmt.Println("")
 
@@ -319,6 +382,52 @@ func main() {
 
 				fmt.Printf("Pass: %t	Score: %d	Description: %s\n", v.Pass, v.ScoreModifier, v.ScoreDescription)
 			}
+		}
+	}
+
+	if bulkResultsCommand.Parsed() {
+		if *bulkResultsFileNameFlag == "" {
+			fmt.Println("Please provide the file to read URLs from")
+			return
+		}
+
+		// try to read entries from a file and get the results
+		if file, err := os.Open(*bulkResultsFileNameFlag); err == nil {
+
+			// close the file when we are done
+			defer file.Close()
+
+			// read the file line by line
+			scanner := bufio.NewScanner(file)
+			for scanner.Scan() {
+				candidate := scanner.Text()
+
+				host, err := validateAndGetURLHost(candidate)
+				if err != nil {
+					fmt.Printf("Skipping entry %s because of error %s\n", candidate, err)
+					continue
+				}
+
+				result := getObservatoryResults(host)
+				if result.Error != "" {
+					fmt.Printf("Error getting result for %s: %s\n", host, result.Error)
+					continue
+				}
+
+				fmt.Printf("[%s] Scan State: 		%s\n", host, result.State)
+				fmt.Printf("[%s] Scan Start Time: 	%s\n", host, result.StartTime)
+
+				if result.State == "FINISHED" {
+					fmt.Printf("[%s] Grade:			%s\n", host, result.Grade)
+					fmt.Printf("[%s] Score:			%d\n", host, result.Score)
+					fmt.Printf("[%s] Failed/Passed/Total: 	%d/%d/%d\n", host, result.TestsFailed, result.TestsPassed, result.TestsQuantity)
+					fmt.Printf("[%s] Scan ID:		%d\n", host, result.ScanID)
+				}
+			}
+
+		} else {
+			fmt.Printf("Failed to open file: %s", err)
+			return
 		}
 	}
 }
