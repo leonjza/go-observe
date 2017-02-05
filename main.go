@@ -74,13 +74,14 @@ func main() {
 
 	// get the command intended to run
 	command := flag.Arg(0)
-	// and the rest of the arguments
-	args := os.Args[2:]
 
 	if command == "" {
 		flag.Usage()
 		return
 	}
+
+	// get the arguments
+	args := os.Args[2:]
 
 	// parse commandline flags based on the command we are running
 	switch command {
