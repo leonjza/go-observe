@@ -43,13 +43,12 @@ type scanObject struct {
 }
 
 type scanDetail struct {
-	Expectation      string            `json:"expectation"`
-	Name             string            `json:"name"`
-	Output           map[string]string `json:"output"`
-	Pass             bool              `json:"pass"`
-	Result           string            `json:"result"`
-	ScoreDescription string            `json:"score_description"`
-	ScoreModifier    int               `json:"score_modifier"`
+	Expectation      string `json:"expectation"`
+	Name             string `json:"name"`
+	Pass             bool   `json:"pass"`
+	Result           string `json:"result"`
+	ScoreDescription string `json:"score_description"`
+	ScoreModifier    int    `json:"score_modifier"`
 }
 
 func validateAndGetURLHost(urlSample string) (string, error) {
