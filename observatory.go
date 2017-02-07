@@ -11,7 +11,8 @@ import (
 	"time"
 )
 
-func callObservatory(method string, endpoint string, target interface{}, queryString map[string]string, requestBody map[string]string) {
+func callObservatory(method string, endpoint string, target interface{}, queryString map[string]string,
+	requestBody map[string]string) {
 
 	observatoryBase := "https://http-observatory.security.mozilla.org/api/v1/"
 

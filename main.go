@@ -86,56 +86,44 @@ func main() {
 	// parse commandline flags based on the command we are running
 	switch command {
 	case "version":
-		{
-			versionCommand.Parse(args)
+		versionCommand.Parse(args)
+
+		if versionCommand.Parsed() {
+			printVersion()
 		}
+
 	case "submit":
-		{
-			submitCommand.Parse(args)
+		submitCommand.Parse(args)
+
+		if submitCommand.Parsed() {
+			execSubmitCommand(*submitURLFlag, *submitHideFlag, *submitRescanFlag)
 		}
+
 	case "bulksubmit":
-		{
-			bulkSubmitCommand.Parse(args)
+		bulkSubmitCommand.Parse(args)
+
+		if bulkSubmitCommand.Parsed() {
+			execBulkSubmitCommand(*bulkSubmitFileNameFlag)
 		}
+
 	case "results":
-		{
-			resultsCommand.Parse(args)
+		resultsCommand.Parse(args)
+
+		if resultsCommand.Parsed() {
+			execResultsCommand(*resultsURLFlag, *resultsDetailFlag)
 		}
+
 	case "bulkresults":
-		{
-			bulkResultsCommand.Parse(args)
+		bulkResultsCommand.Parse(args)
+
+		if bulkResultsCommand.Parsed() {
+			execBulkResultsCommand(*bulkResultsFileNameFlag)
 		}
+
 	default:
-		{
-			fmt.Printf("'%s' is not a valid command", command)
-			flag.Usage()
-			return
-		}
-	}
+		fmt.Printf("'%s' is not a valid command", command)
+		flag.Usage()
 
-	// exec the subcommand if the flags managed to parse
-	if versionCommand.Parsed() {
-
-		printVersion()
-	}
-
-	if submitCommand.Parsed() {
-
-		execSubmitCommand(*submitURLFlag, *submitHideFlag, *submitRescanFlag)
-	}
-
-	if bulkSubmitCommand.Parsed() {
-
-		execBulkSubmitCommand(*bulkSubmitFileNameFlag)
-	}
-
-	if resultsCommand.Parsed() {
-
-		execResultsCommand(*resultsURLFlag, *resultsDetailFlag)
-	}
-
-	if bulkResultsCommand.Parsed() {
-
-		execBulkResultsCommand(*bulkResultsFileNameFlag)
+		return
 	}
 }
