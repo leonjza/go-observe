@@ -6,20 +6,20 @@ import (
 	"os"
 )
 
-func execSubmitCommand(submitURL string, hide bool, rescan bool) {
+func execSubmitCommand(submitURL *string, hide *bool, rescan *bool) {
 
-	if submitURL == "" {
+	if *submitURL == "" {
 		fmt.Println("Please provide a URL to submit")
 		return
 	}
 
-	host, err := validateAndGetURLHost(submitURL)
+	host, err := validateAndGetURLHost(*submitURL)
 	if err != nil {
 		fmt.Printf("Failed parsing host from url with error: %s", err)
 		return
 	}
 
-	result := submitObservatoryAnalysis(host, hide, rescan)
+	result := submitObservatoryAnalysis(host, *hide, *rescan)
 
 	if result.Error != "" {
 		fmt.Printf("Error: %s\n", result.Error)
@@ -29,15 +29,15 @@ func execSubmitCommand(submitURL string, hide bool, rescan bool) {
 	fmt.Printf("Scan is now:	%s\n", result.State)
 }
 
-func execBulkSubmitCommand(filename string) {
+func execBulkSubmitCommand(filename *string) {
 
-	if filename == "" {
+	if *filename == "" {
 		fmt.Println("Please provide a filename to read URLs from")
 		return
 	}
 
 	// try to read entries from a file and submit the results
-	if file, err := os.Open(filename); err == nil {
+	if file, err := os.Open(*filename); err == nil {
 
 		// close the file when we are done
 		defer file.Close()
@@ -62,14 +62,14 @@ func execBulkSubmitCommand(filename string) {
 	}
 }
 
-func execResultsCommand(url string, detail bool) {
+func execResultsCommand(url *string, detail *bool) {
 
-	if url == "" {
+	if *url == "" {
 		fmt.Println("Please provide a URL to retreive results")
 		return
 	}
 
-	host, err := validateAndGetURLHost(url)
+	host, err := validateAndGetURLHost(*url)
 	if err != nil {
 		fmt.Printf("Failed parsing host from url with error: %s", err)
 		return
@@ -93,7 +93,7 @@ func execResultsCommand(url string, detail bool) {
 		fmt.Printf("Scan ID:		%d\n", result.ScanID)
 	}
 
-	if detail {
+	if *detail {
 		details := getObservatoryDetails(result.ScanID)
 		fmt.Println("")
 
@@ -105,15 +105,15 @@ func execResultsCommand(url string, detail bool) {
 
 }
 
-func execBulkResultsCommand(filename string) {
+func execBulkResultsCommand(filename *string) {
 
-	if filename == "" {
+	if *filename == "" {
 		fmt.Println("Please provide the file to read URLs from")
 		return
 	}
 
 	// try to read entries from a file and get the results
-	if file, err := os.Open(filename); err == nil {
+	if file, err := os.Open(*filename); err == nil {
 
 		// close the file when we are done
 		defer file.Close()

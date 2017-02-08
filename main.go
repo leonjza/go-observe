@@ -96,28 +96,28 @@ func main() {
 		submitCommand.Parse(args)
 
 		if submitCommand.Parsed() {
-			execSubmitCommand(*submitURLFlag, *submitHideFlag, *submitRescanFlag)
+			execSubmitCommand(submitURLFlag, submitHideFlag, submitRescanFlag)
 		}
 
 	case "bulksubmit":
 		bulkSubmitCommand.Parse(args)
 
 		if bulkSubmitCommand.Parsed() {
-			execBulkSubmitCommand(*bulkSubmitFileNameFlag)
+			execBulkSubmitCommand(bulkSubmitFileNameFlag)
 		}
 
 	case "results":
 		resultsCommand.Parse(args)
 
 		if resultsCommand.Parsed() {
-			execResultsCommand(*resultsURLFlag, *resultsDetailFlag)
+			execResultsCommand(resultsURLFlag, resultsDetailFlag)
 		}
 
 	case "bulkresults":
 		bulkResultsCommand.Parse(args)
 
 		if bulkResultsCommand.Parsed() {
-			execBulkResultsCommand(*bulkResultsFileNameFlag)
+			execBulkResultsCommand(bulkResultsFileNameFlag)
 		}
 
 	default:
