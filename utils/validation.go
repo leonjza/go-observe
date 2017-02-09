@@ -6,11 +6,13 @@ import (
 	"strings"
 )
 
+// ValidateAndGetURLHost checks a string and attempts to extract
+// a hostname from it.
 func ValidateAndGetURLHost(urlSample string) (string, error) {
 
 	// cheat a little by checking if we have :// in the string.
 	// if we dont, its probably a hostname already
-	if !strings.Contains("://", urlSample) {
+	if !strings.Contains(urlSample, "://") {
 
 		s := strings.TrimSpace(urlSample)
 		return s, nil

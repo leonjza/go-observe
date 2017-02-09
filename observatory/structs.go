@@ -1,5 +1,6 @@
 package observatory
 
+// ScanObject is a representation of a scans summary
 type ScanObject struct {
 	// If an error occured, the Error key will be set. This is how
 	// we will know if shit went south.
@@ -21,6 +22,7 @@ type ScanObject struct {
 	TestsQuantity       int               `json:"tests_quantity"`
 }
 
+// ScanDetail is the representation of a scans details
 type ScanDetail struct {
 	// Values from:
 	//  https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md#tests

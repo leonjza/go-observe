@@ -5,24 +5,19 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"time"
 )
 
 func callObservatory(method string, endpoint string, target interface{}, queryString map[string]string,
-	requestBody map[string]string) {
+	requestBody map[string]string) error {
 
 	observatoryBase := "https://http-observatory.security.mozilla.org/api/v1/"
 
 	// prepare the final url we will call
 	u, err := url.Parse(observatoryBase + endpoint)
-
 	if err != nil {
-		fmt.Println("Somehow failed to parse base Observatory URL")
-		fmt.Println(err)
-
-		os.Exit(2)
+		return err
 	}
 
 	// prepare to add the query string parameters
@@ -43,6 +38,9 @@ func callObservatory(method string, endpoint string, target interface{}, querySt
 
 	// build the request
 	req, err := http.NewRequest(method, u.String(), strings.NewReader(bodyData.Encode()))
+	if err != nil {
+		return err
+	}
 
 	// If we are using the post method, set the content type
 	// as form-encoded so that the body could be understood on the
@@ -51,23 +49,17 @@ func callObservatory(method string, endpoint string, target interface{}, querySt
 		req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 	}
 
-	if err != nil {
-		fmt.Println("New Request:", err)
-		return
-	}
-
 	// make the request
 	client := http.Client{Timeout: 10 * time.Second}
-
 	resp, err := client.Do(req)
-
 	if err != nil {
-		fmt.Println("Do: ", err)
-		return
+		return err
 	}
 
 	defer resp.Body.Close()
 
 	// marshal the response into the struct type at target
 	json.NewDecoder(resp.Body).Decode(&target)
+
+	return nil
 }

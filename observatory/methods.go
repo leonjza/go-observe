@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// Submit a host for analysis.
+// SubmitObservatoryAnalysis submits a URL for analysis
 func SubmitObservatoryAnalysis(observatoryHost string, nohide bool, rescan bool) (ScanObject, error) {
 
 	fmt.Printf("Submitting analysis for %s\n", observatoryHost)
@@ -29,7 +29,10 @@ func SubmitObservatoryAnalysis(observatoryHost string, nohide bool, rescan bool)
 	}
 
 	results := ScanObject{}
-	callObservatory("post", "analyze", &results, queryString, requestBody)
+	err := callObservatory("post", "analyze", &results, queryString, requestBody)
+	if err != nil {
+		return results, err
+	}
 
 	// If there was an error, return that too
 	if results.Error != "" {
@@ -39,7 +42,7 @@ func SubmitObservatoryAnalysis(observatoryHost string, nohide bool, rescan bool)
 	return results, nil
 }
 
-// Get analysis results
+// GetObservatoryResults gets the results of a hostname
 func GetObservatoryResults(observatoryHost string) (ScanObject, error) {
 
 	fmt.Printf("Getting results for: %s\n", observatoryHost)
@@ -48,7 +51,10 @@ func GetObservatoryResults(observatoryHost string) (ScanObject, error) {
 	m["host"] = observatoryHost
 
 	result := ScanObject{}
-	callObservatory("get", "analyze", &result, m, make(map[string]string))
+	err := callObservatory("get", "analyze", &result, m, make(map[string]string))
+	if err != nil {
+		return result, err
+	}
 
 	// If there was an error, return that too
 	if result.Error != "" {
@@ -58,7 +64,8 @@ func GetObservatoryResults(observatoryHost string) (ScanObject, error) {
 	return result, nil
 }
 
-func getObservatoryDetails(scanID int) map[string]ScanDetail {
+// GetObservatoryDetails gets the details of a hostname
+func GetObservatoryDetails(scanID int) (map[string]ScanDetail, error) {
 
 	fmt.Printf("Getting scan details for scan: %d\n", scanID)
 
@@ -66,7 +73,10 @@ func getObservatoryDetails(scanID int) map[string]ScanDetail {
 	m["scan"] = strconv.Itoa(scanID)
 
 	result := map[string]ScanDetail{}
-	callObservatory("get", "getScanResults", &result, m, make(map[string]string))
+	err := callObservatory("get", "getScanResults", &result, m, make(map[string]string))
+	if err != nil {
+		return result, err
+	}
 
-	return result
+	return result, nil
 }

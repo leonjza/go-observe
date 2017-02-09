@@ -36,14 +36,11 @@ Examples:
 			return
 		}
 
-		if forceRescan {
-			fmt.Println("A rescan will be forced")
-		}
-
 		// validate the url/host
 		target, err := utils.ValidateAndGetURLHost(args[0])
 		if err != nil {
 			fmt.Printf("Failed to parse url/host with error: %s\n", err)
+			return
 		}
 
 		// Submit the analysis
