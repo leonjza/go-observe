@@ -15,34 +15,34 @@ VERSION=$1
 # Linux builds
 FILENAME="go-observe-$VERSION-linux-386"
 echo "Compiling 386 Linux to $FILENAME"
-GOOS=linux GOARCH=386 go build  -o build/$FILENAME *.go
+GOOS=linux GOARCH=386 go build  -o build/$FILENAME
 
 FILENAME="go-observe-$VERSION-linux-amd64"
 echo "Compiling amd64 Linux to $FILENAME"
-GOOS=linux GOARCH=amd64 go build  -o build/$FILENAME *.go
+GOOS=linux GOARCH=amd64 go build  -o build/$FILENAME
 
 FILENAME="go-observe-$VERSION-linux-arm"
 echo "Compiling arm Linux to $FILENAME"
-GOOS=linux GOARCH=arm go build  -o build/$FILENAME *.go
+GOOS=linux GOARCH=arm go build  -o build/$FILENAME
 
 FILENAME="go-observe-$VERSION-linux-arm64"
 echo "Compiling arm64 Linux to $FILENAME"
-GOOS=linux GOARCH=arm go build  -o build/$FILENAME *.go
+GOOS=linux GOARCH=arm go build  -o build/$FILENAME
 
 # Windows build
 FILENAME="go-observe-$VERSION-windows-386.exe"
 echo "Compiling 386 Windows to $FILENAME"
-GOOS=windows GOARCH=386 go build  -o build/$FILENAME *.go
+GOOS=windows GOARCH=386 go build  -o build/$FILENAME
 
 FILENAME="go-observe-$VERSION-windows-amd64.exe"
 echo "Compiling amd64 Windows to $FILENAME"
-GOOS=windows GOARCH=amd64 go build  -o build/$FILENAME *.go
+GOOS=windows GOARCH=amd64 go build  -o build/$FILENAME
 
 # macOS build
 FILENAME="go-observe-$VERSION-darwin-386"
 echo "Compiling 386 macOS to $FILENAME"
-GOOS=darwin GOARCH=386 go build  -o build/$FILENAME *.go
+GOOS=darwin GOARCH=386 go build  -o build/$FILENAME
 
 FILENAME="go-observe-$VERSION-darwin-amd64"
 echo "Compiling amd64 macOS to $FILENAME"
-GOOS=darwin GOARCH=amd64 go build  -o build/$FILENAME *.go
+GOOS=darwin GOARCH=amd64 go build  -o build/$FILENAME
