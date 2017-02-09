@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func validateAndGetURLHost(urlSample string) (string, error) {
+func ValidateAndGetURLHost(urlSample string) (string, error) {
 
 	// cheat a little by checking if we have :// in the string.
 	// if we dont, its probably a hostname already
@@ -26,9 +26,4 @@ func validateAndGetURLHost(urlSample string) (string, error) {
 
 	// return parsed.Scheme + "://" + parsed.Host
 	return parsed.Host, nil
-}
-
-func printVersion() {
-
-	fmt.Printf("%s\n", version)
 }

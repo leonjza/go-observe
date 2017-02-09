@@ -1,4 +1,4 @@
-package main
+package observatory
 
 import (
 	"encoding/json"
@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -71,59 +70,4 @@ func callObservatory(method string, endpoint string, target interface{}, querySt
 
 	// marshal the response into the struct type at target
 	json.NewDecoder(resp.Body).Decode(&target)
-}
-
-// Submit a host for analysis.
-func submitObservatoryAnalysis(observatoryHost string, nohide bool, rescan bool) scanObject {
-
-	fmt.Printf("Submitting analysis for %s\n", observatoryHost)
-
-	queryString := make(map[string]string)
-	queryString["host"] = observatoryHost
-
-	// by default, hide results from the observatory
-	requestBody := make(map[string]string)
-	requestBody["hidden"] = "true"
-
-	if nohide {
-		fmt.Println("Removing 'hidden' flag for this scan on the observatory")
-		delete(requestBody, "hidden")
-	}
-
-	if rescan {
-		fmt.Println("Forcing a rescan on the observatory")
-		requestBody["rescan"] = "true"
-	}
-
-	results := scanObject{}
-	callObservatory("post", "analyze", &results, queryString, requestBody)
-
-	return results
-}
-
-// Get analysis results
-func getObservatoryResults(observatoryHost string) scanObject {
-
-	fmt.Printf("Getting results for: %s\n", observatoryHost)
-
-	m := make(map[string]string)
-	m["host"] = observatoryHost
-
-	result := scanObject{}
-	callObservatory("get", "analyze", &result, m, make(map[string]string))
-
-	return result
-}
-
-func getObservatoryDetails(scanID int) map[string]scanDetail {
-
-	fmt.Printf("Getting scan details for scan: %d\n", scanID)
-
-	m := make(map[string]string)
-	m["scan"] = strconv.Itoa(scanID)
-
-	result := map[string]scanDetail{}
-	callObservatory("get", "getScanResults", &result, m, make(map[string]string))
-
-	return result
 }

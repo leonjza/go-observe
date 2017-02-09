@@ -1,6 +1,6 @@
-package main
+package observatory
 
-type scanObject struct {
+type ScanObject struct {
 	// If an error occured, the Error key will be set. This is how
 	// we will know if shit went south.
 	Error string `json:"error"`
@@ -21,7 +21,7 @@ type scanObject struct {
 	TestsQuantity       int               `json:"tests_quantity"`
 }
 
-type scanDetail struct {
+type ScanDetail struct {
 	// Values from:
 	//  https://github.com/mozilla/http-observatory/blob/master/httpobs/docs/api.md#tests
 	Expectation      string `json:"expectation"`
