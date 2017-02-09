@@ -1,3 +1,4 @@
 package utils
 
-const Version = "0.3"
+// Version is the version we haz, duhr
+const Version = "0.4"
