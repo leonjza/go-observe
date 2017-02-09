@@ -1,41 +1,43 @@
 # go-observe
 🌌 Go-Observe: A command line Mozilla Observatory client written in Go
 
-![Screenshot](https://i.imgur.com/avK1Mja.png)
+![Screenshot](https://i.imgur.com/PMhaFdu.png)
 
 ## usage:
 
 ```
-» ./go-observe-0.2-darwin-amd64
-
+~ » go-observe
                       __
   ___ ____  _______  / /  ___ ___ _____  _____
  / _  / _ \/___/ _ \/ _ \(_-</ -_) __/ |/ / -_)
  \_, /\___/    \___/_.__/___/\__/_/  |___/\__/
-/___/            @leonjza | v0.2
+/___/ @leonjza
 
 Usage:
- ./go-observe-0.2-darwin-amd64 [command] [<args>]
+  go-observe [command]
 
 Available Commands:
-	results 		- get analysis results for a url
-	bulkresults 		- get bulk analysis for urls from a file
-	submit 			- submit a url for analysis
-	bulksubmit		- submit urls for analysis read from a file
-	version 		- print the version and exit
+  fileresult  Get scan results for URLs / Hostnames in a file
+  filesubmit  Submit URLs / Hostnames from a file to the Observatory for analysis
+  result      Retrieve results for a URL / Hostname from the Observatory
+  submit      Submit a URL / Hostname to the Observatory for analysis
+  version     Show the version of go-observe
 
-Examples:
-	./go-observe-0.2-darwin-amd64 version
-	./go-observe-0.2-darwin-amd64 results -url https://www.google.com
-	./go-observe-0.2-darwin-amd64 results -url https://www.google.com --detail
-	./go-observe-0.2-darwin-amd64 submit -url https://www.google.com
-	./go-observe-0.2-darwin-amd64 submit -url https://www.google.com --rescan
-	./go-observe-0.2-darwin-amd64 bulksubmit -file urls.txt
+Use "go-observe [command] --help" for more information about a command.
 ```
 
 ## install
-Download the release binaries [here](https://github.com/leonjza/go-observe/releases), or, build from source!
+There are many options to get `go-observe`.
 
+Download the release binaries [here](https://github.com/leonjza/go-observe/releases)
+
+*or*
+
+Download with `go get` if you have `$GOPATH` setup: `go get github.com/leonjza/go-observe`
+
+*or*
+
+Build from source!
 ```
 $ git clone https://github.com/leonjza/go-observe.git
 $ cd go-observe
